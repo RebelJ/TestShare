@@ -42,8 +42,6 @@ class LoginViewController: UIViewController {
         
         request.httpMethod = "POST";
         request.httpBody = parameters.percentEncoded()
-//        let postString = "email =\(userEmail) & password =\(userPassword)";
-//        request.httpBody = postString.data(using: .utf8);
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -53,35 +51,31 @@ class LoginViewController: UIViewController {
                 return
             }
             
-        //    var err: NSError?
-       //     var json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers, error : &err) as? NSDictionary
-         
-            
             do {
                 if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: [])as? NSDictionary{
                     
                     
                     print(jsonResult)
-                
-             /*       if let resultValue = jsonResult["status"] as? [String]{
-                        
-                       print("result: \(resultValue)")
-                    }
-               */
-                    
-                    
+                     
                     if let personDictionary = jsonResult as? NSDictionary{
                 
                             let error = personDictionary["error"] as? Bool;
-                        print(error!);
+                            print(error!);
                         
                            if(error == false)
                            {
-                            //login successful
-                            UserDefaults.standard.set(true, forKey: "isUserLoggedin");
-                            UserDefaults.standard.synchronize();
-                            DispatchQueue.main.async{
-                                self.dismiss(animated: true, completion: nil);
+                            if let userId = jsonResult["uid"] as? String{
+                                print(userId)
+                                
+                                //login successful
+                                UserDefaults.standard.set(true, forKey: "isUserLoggedin");
+                                UserDefaults.standard.set(userId, forKey: "userId");
+                                UserDefaults.standard.synchronize();
+                                
+                             //   let userStorage = UserDefaults.standard.string(forKey: "userId")
+                                DispatchQueue.main.async{
+                                    self.dismiss(animated: true, completion: nil);
+                                }
                             }
                             
                            }

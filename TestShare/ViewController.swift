@@ -12,6 +12,7 @@ class ViewController: UIViewController, MenuControllerDelegate {
    
     private let settingsController = SettingsViewController()
     private let infoController = InfoViewController()
+    
     private var sideMenu: SideMenuNavigationController?
     
   

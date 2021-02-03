@@ -37,56 +37,6 @@ class ShareViewController: SLComposeServiceViewController {
     
      private func passSelectedItemsToApp() {
         
-        /*
-        
-        var imageFound = false
-      //  for item: AnyObject in extensionContext?.inputItems {
-            let item = extensionContext?.inputItems as? [NSExtensionItem]
-            let inputItem = item as! NSExtensionItem
-            for provider: AnyObject in inputItem.attachments! {
-                let itemProvider = provider as! NSItemProvider
-                if itemProvider.hasItemConformingToTypeIdentifier("public.jpeg") {
-                    // This is an image. We'll load it, then place it in our image view.
-                    itemProvider.loadItem(forTypeIdentifier: "public.jpeg", options: nil, completionHandler: { (image, error) in
-                        OperationQueue.main.addOperation {
-                            
-                            var imgData: Data!
-                                                        if let url = item as? URL{
-                                                            imgData = try! Data(contentsOf: url)
-                                                        }
-
-
-                        if let strongImageView = weakImageView {
-
-                               if let imageURL = image as? NSURL{
-
-                             strongImageView.image = UIImage(data:NSData(contentsOfURL: imageURL)!)
-
-                                }else{
-
-                                  strongImageView.image = image as? UIImage
-                                }
-
-                            }
-
-
-                        }
-                    })
-
-                    imageFound = true
-                    break
-                }
-            }
-
-            if (imageFound) {
-                // We only handle one image, so stop looking for more.
-                break
-            }
-      //  }*/
-        
-        
-        
-        
         guard
           let items = extensionContext?.inputItems as? [NSExtensionItem],
           let itemAttachment = items.first,
@@ -103,7 +53,6 @@ class ShareViewController: SLComposeServiceViewController {
             // Check if we are sharing a Image
             if inputItem.hasItemConformingToTypeIdentifier("public.jpeg") {
                 // Load it, so we can get the path to it
-               
                inputItem.loadItem(forTypeIdentifier: "public.jpeg", options: nil,
                         completionHandler: { data, error in
                      
@@ -114,41 +63,16 @@ class ShareViewController: SLComposeServiceViewController {
                                 return
                             }
                             
-                         /*   var imgData: Data!
-                            if let url = item as? URL{
-                                let imgData = try! Data(contentsOf: url)
-                            }
-                            */
-                            
                             var imgData: UIImage?
                             if let someUrl = data as? URL {
                                 do {
-                                  // a ends up being nil in both of these cases
                                     imgData = UIImage(contentsOfFile: someUrl.path)
-                                //  let a = NSData(contentsOfFile: someUrl.absoluteString)
-                                 //   imgData = UIImage(data: a as! Data)
-                                  // let a = try Data(contentsOf: someUrl)
-                                  // image = UIImage(contentsOfFile: someUrl.absoluteString)
                                 } catch {
                                     print(error)
                                 }
                             }
                             
-                          /*  var image: UIImage?
-                                   if item is NSURL {
-                                    let im = item as! NSURL
-                                    
-                                    let dataim = try? UIImage(data: NSData(contentsOf: im as! URL) as Data)!
-                                    //   let data = try? Data(contentsOf: item!)
-                                       image = UIImage(data: dataim as! Data)!
-                                   }
-                            
-                                   if let image = image {
-                                       DispatchQueue.main.async {
-                                           // image here
-                                       }
-                                   }
-                            */
+                         
                         var itemIdx = 0
 
                         // The app won't be able to access the images by path directly in the Camera Roll folder,
@@ -157,10 +81,12 @@ class ShareViewController: SLComposeServiceViewController {
 
                         // Now add the path to the list of arguments we'll pass to the app:
                       //  self.addImagePath(toArgumentList: filePath)
-                            let iud = "testiud"
+                            let idUser = "testiud"
+                            
+                            let userUIDStorage = UserDefaults.standard.string(forKey: "userId")
                             let parameters : [String : String] = [
-                                "uid": iud,
-                                "filename": filePath!]
+                                "idUser": userUIDStorage!,
+                                /*"filename": filePath!*/]
                             
                         self.imageUploadRequest(uploadImage: imgData as? UIImage, param : parameters)
                             
@@ -195,28 +121,12 @@ class ShareViewController: SLComposeServiceViewController {
             m_invokeArgs = "\(m_invokeArgs),\(imagePath ?? "")"
         }
     }
-/*
-        func addImagePath(ToArgumentList imagePath: NSString?)
-        {
-            assert( nil != imagePath );
 
-            // The list of arguments we will pass to the AIR app when we invoke it.
-            // It will be a comma-separated list of file paths: /path/to/image1.jpg,/path/to/image2.jpg
-            if ( nil == m_invokeArgs)
-            {
-                m_invokeArgs = imagePath as String?;
-            }
-            else
-            {
-                m_invokeArgs = NSString(format: "%,@%@,%@", m_invokeArgs as! CVarArg, imagePath as! CVarArg) as String ;
-            }
-        }
-*/
         func saveImage(
             toAppGroupFolder image: UIImage?,
             imageIndex: Int
         ) -> String? {
-     //       assert(nil != image)
+            assert(nil != image)
 
             let jpegData = image?.jpegData(compressionQuality: 1.0)
 
@@ -240,85 +150,7 @@ class ShareViewController: SLComposeServiceViewController {
             return filePath
         }
 
-       
-        func invokeApp(_ invokeArgs: String?) {
-            // Prepare the URL request
-            // this will use the custom url scheme of your app
-            // and the paths to the photos you want to share:
-            let urlString = "\(APP_SHARE_URL_SCHEME)://\((nil == invokeArgs ? "" : invokeArgs) ?? "")"
-            let url = URL(string: urlString)
 
-            let className = "UIApplication"
-            if NSClassFromString(className) != nil {
-               // let object = NSClassFromString(className)?.perform(#selector(UIApplication.shared))
-               // object?.perform(#selector(UIApplication.openURL(_:)), with: url)
-            }
-
-            // Now let the host app know we are done, so that it unblocks its UI:
-            super.didSelectPost()
-        }
-    
-        #if HIDE_POST_DIALOG
-        func configurationItems() -> [Any]! {
-            // Comment out this whole function if you want the Post dialog to show.
-            passSelectedItemsToApp()
-
-            // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
-            return []
-        }
-
-        #endif
-        
-        
-     
-        
-        
-        /*
-        
-        
-        #ifdef HIDE_POST_DIALOG
-        - ( void ) willMoveToParentViewController: ( UIViewController * ) parent
-        {
-            // This is called at the point where the Post dialog is about to be shown.
-            // Make it transparent, so we don't see it, but first remember how transparent it was originally:
-
-            m_oldAlpha = [ self.view alpha ];
-            [ self.view setAlpha: 0.0 ];
-        }
-        #endif
-
-        #ifdef HIDE_POST_DIALOG
-        - ( void ) didMoveToParentViewController: ( UIViewController * ) parent
-        {
-            // Restore the original transparency:
-            [ self.view setAlpha: m_oldAlpha ];
-        }
-        #endif
-        #ifdef HIDE_POST_DIALOG
-        - ( id ) init
-        {
-            if ( self = [ super init ] )
-            {
-                // Subscribe to the notification which will tell us when the keyboard is about to pop up:
-                [ [ NSNotificationCenter defaultCenter ] addObserver: self selector: @selector( keyboardWillShow: ) name: UIKeyboardWillShowNotification    object: nil ];
-            }
-
-            return self;
-        }
-        #endif
-        #ifdef HIDE_POST_DIALOG
-        - ( void ) keyboardWillShow: ( NSNotification * ) note
-        {
-            // Dismiss the keyboard before it has had a chance to show up:
-            [ self.view endEditing: true ];
-        }
-        #endif
-        @end
-    */
-    
-    
-    
-    
     func imageUploadRequest(uploadImage: UIImage?, param: [String:String]?) {
 
         //Send user data to server
@@ -330,12 +162,12 @@ class ShareViewController: SLComposeServiceViewController {
 
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 
-        let imageData = uploadImage?.jpegData(compressionQuality: 1.0)
+      //  let imageData = uploadImage?.jpegData(compressionQuality: 1.0)
         
         
       //  if(imageData==nil)  { return; }
 
-        request.httpBody = createBodyWithParameters(parameters : param, filePathKey: "file", imageDataKey: imageData! as NSData, boundary: boundary) as Data
+        request.httpBody = createBodyWithParameters(parameters : param, filePathKey: "file", imageDataKey: uploadImage as? UIImage, boundary: boundary) as Data
 
         //myActivityIndicator.startAnimating();
 
@@ -388,7 +220,7 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
 
-    func createBodyWithParameters(parameters: [String: String]? , filePathKey: String?, imageDataKey: NSData, boundary: String) -> NSData {
+    func createBodyWithParameters(parameters: [String: String]? , filePathKey: String?, imageDataKey: UIImage?, boundary: String) -> NSData {
         let body = NSMutableData();
 
         
@@ -401,14 +233,14 @@ class ShareViewController: SLComposeServiceViewController {
             }
         }
 
-        let filename = "user-profile.jpg"
+        let contentType = "image/jpg"
 
-        let mimetype = "image/jpg"
-
+        let imageData = imageDataKey?.jpegData(compressionQuality: 1)
+         
         body.appendString(boundaryPrefix)
-        body.appendString("Content-Disposition: form-data; name=\"\(filePathKey!)\"; filename=\"\(filename)\"\r\n")
-        body.appendString("Content-Type: \(mimetype)\r\n\r\n")
-        body.append(imageDataKey as Data)
+        body.appendString("Content-Disposition: form-data; name=\"filename\" ; filename=\"\(filePathKey)\"\r\n")
+        body.appendString("Content-Type: \(contentType)\r\n\r\n")
+        body.append(imageData!)
         body.appendString("\r\n")
 
         body.appendString(boundaryPrefix)
@@ -422,13 +254,6 @@ class ShareViewController: SLComposeServiceViewController {
 
 }
 
-extension NSMutableData {
-
-    func appendString(string: String) {
-        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: true)
-        append(data!)
-    }
-}
 extension Dictionary {
     func percentEncoded() -> Data? {
         return map { key, value in
