@@ -8,6 +8,7 @@
 import UIKit
 import Social
 import MobileCoreServices
+//import TestShare
 
 
 
@@ -19,6 +20,25 @@ class ShareViewController: SLComposeServiceViewController {
     let APP_SHARE_URL_SCHEME = "schemename"
     let m_oldAlpha: CGFloat = 1.0 // Keeps the original transparency of the Post dialog for when we want to hide it.
     
+    
+   
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+         super.viewDidAppear(animated)
+         self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+     }
+    
+    @objc func openImage(_ url: URL) -> Bool {
+           var responder: UIResponder? = self
+           while responder != nil {
+               if let application = responder as? UIApplication {
+                   return application.perform(#selector(openImage(_:)), with: url) != nil
+               }
+               responder = responder?.next
+           }
+           return false
+       }
 
     override func isContentValid() -> Bool {
         // Do validation of contentText and/or NSExtensionContext attachments here
@@ -42,12 +62,12 @@ class ShareViewController: SLComposeServiceViewController {
           let itemAttachment = items.first,
           let attachments = itemAttachment.attachments
         else { return }
+        
+        var itemIdx = 0
 
         // Reset the counter and the argument list for invoking the app:
-      m_invokeArgs = nil
-      let m_inputItemCount = items.count
-        
-
+    //  m_invokeArgs = nil
+  //    let m_inputItemCount = items.count
         // Iterate through the attached files
         for inputItem in attachments {
             // Check if we are sharing a Image
@@ -63,7 +83,11 @@ class ShareViewController: SLComposeServiceViewController {
                                 return
                             }
                             
+                            
+                            
                             var imgData: UIImage?
+                            
+                            
                             if let someUrl = data as? URL {
                                 do {
                                     imgData = UIImage(contentsOfFile: someUrl.path)
@@ -73,28 +97,33 @@ class ShareViewController: SLComposeServiceViewController {
                             }
                             
                          
-                        var itemIdx = 0
+                          
 
-                        // The app won't be able to access the images by path directly in the Camera Roll folder,
+                            
+                           
+                      
                         // so we temporary copy them to a folder which both the extension and the app can access:
                         let filePath = self.saveImage(toAppGroupFolder: imgData as? UIImage, imageIndex: itemIdx)
 
-                        // Now add the path to the list of arguments we'll pass to the app:
-                      //  self.addImagePath(toArgumentList: filePath)
-                            let idUser = "testiud"
                             
-                            let userUIDStorage = UserDefaults.standard.string(forKey: "userId")
+                            let userUIDStorage = "testasupp"/*UserDefaults.standard.string(forKey: "userId")*/
+                        
                             let parameters : [String : String] = [
-                                "idUser": userUIDStorage!,
+                                "idUser": userUIDStorage,
                                 /*"filename": filePath!*/]
                             
                         self.imageUploadRequest(uploadImage: imgData as? UIImage, param : parameters)
                             
                         // If we have reached the last attachment, it's time to hand control to the app:
                         itemIdx += 1
-                        if itemIdx >= m_inputItemCount {
+                            if itemIdx >= attachments.count {
+                            
+                            print("done")
                           //  invokeApp(m_invokeArgs)
                         }
+                            
+                            imgData = nil
+                            
                             
                             
                     })
@@ -121,33 +150,100 @@ class ShareViewController: SLComposeServiceViewController {
             m_invokeArgs = "\(m_invokeArgs),\(imagePath ?? "")"
         }
     }
+    
+    
+     /*func store(image: UIImage?, name: String) throws {
+        
+        guard let imageData = image?.pngData() else {
+            throw NSError(domain: "com.thecodedself.imagestore", code: 0, userInfo: [NSLocalizedDescriptionKey: "The image could not be created"])
+        
+        }
+        
+        guard let imagePath = path(for: name) else {
+            throw NSError(domain: "com.thecodedself.imagestore", code: 0, userInfo: [NSLocalizedDescriptionKey: "The image path could not be retrieved"])
+        }
+        
+        try imageData.write(to: imagePath)
+    }
+    
+    private  func path(for imageName: String, fileExtension: String = "png") -> URL? {
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        return directory?.appendingPathComponent("\(imageName).\(fileExtension)")
+    }
+    */
+    
+    
+    
 
-        func saveImage(
-            toAppGroupFolder image: UIImage?,
-            imageIndex: Int
-        ) -> String? {
-            assert(nil != image)
+    func saveImage(
+        toAppGroupFolder image: UIImage?,
+        imageIndex: Int
+    ) -> String? {
+        assert(nil != image)
+        
+        
+        
+       try! ImageStore.store(image: image!, name: "yes")
+        
+        
+        
+      ImageStore.retrieve(imageNamed: "yes")
+        
+        
+        
+        
+        let jpegData = image?.jpegData(compressionQuality: 1.0)
 
-            let jpegData = image?.jpegData(compressionQuality: 1.0)
+        let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: APP_SHARE_GROUP)
+        let documentsPath = containerURL?.path
 
-            let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: APP_SHARE_GROUP)
-            let documentsPath = containerURL?.path
+        // Note that we aren't using massively unique names for the files in this example:
+        let fileName = "image\(imageIndex).jpg"
 
-            // Note that we aren't using massively unique names for the files in this example:
-            let fileName = "image\(imageIndex).jpg"
+        let filePath = URL(fileURLWithPath: documentsPath ?? "").appendingPathComponent(fileName).path
+        if let jpegData = jpegData {
+            NSData(data: jpegData).write(toFile: filePath, atomically: true)
+        }
 
-            let filePath = URL(fileURLWithPath: documentsPath ?? "").appendingPathComponent(fileName).path
-            if let jpegData = jpegData {
-                NSData(data: jpegData).write(toFile: filePath, atomically: true)
+        // -- Store image url to NSUserDefaults
+        // Boucle d'enregistrement image
+        var defaults = UserDefaults(suiteName: "group.com.schemename.nameofyourshareappgroup")
+        defaults?.set(filePath, forKey: "url")
+        defaults?.synchronize()
+
+        return filePath
+        
+/*
+        let key = "FavoritesContactStandardImage"
+
+        func getImageKey(_ index:Int) -> String {
+            return "\(key)\(index)"
+        }
+
+        func saveImages(_ images:[UIImage]) {
+            var list = UserDefaults.standard.array(forKey: key) as? [String] ?? [String]()
+            var index = list.count
+
+            for image in images {
+                let imgKey = getImageKey(index)
+                saveImage(imgKey, image)
+                list.append(imgKey)
+                UserDefaults.standard.set(list, forKey: key)
+                UserDefaults.standard.synchronize()
+                index += 1
             }
+        }
 
-            //Mahantesh -- Store image url to NSUserDefaults
+        func saveImage(_ imageName:String, _ image:UIImage) {
+            let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+            let imgPath = URL(fileURLWithPath: path.appendingPathComponent(imageName))
 
-            var defaults = UserDefaults(suiteName: "group.com.schemename.nameofyourshareappgroup")
-            defaults?.set(filePath, forKey: "url")
-            defaults?.synchronize()
-
-            return filePath
+            do {
+                try UIImagePNGRepresentation(image)?.write(to: imgPath, options: .atomic)
+            } catch let error {
+                print(error.localizedDescription)
+            }
+        }*/
         }
 
 
@@ -166,8 +262,9 @@ class ShareViewController: SLComposeServiceViewController {
         
         
       //  if(imageData==nil)  { return; }
+        
 
-        request.httpBody = createBodyWithParameters(parameters : param, filePathKey: "file", imageDataKey: uploadImage as? UIImage, boundary: boundary) as Data
+        request.httpBody = createBodyWithParameters(parameters : param, filePathKey: "test", imageDataKey: uploadImage as? UIImage, boundary: boundary) as Data
 
         //myActivityIndicator.startAnimating();
 
@@ -236,6 +333,7 @@ class ShareViewController: SLComposeServiceViewController {
         let contentType = "image/jpg"
 
         let imageData = imageDataKey?.jpegData(compressionQuality: 1)
+        
          
         body.appendString(boundaryPrefix)
         body.appendString("Content-Disposition: form-data; name=\"filename\" ; filename=\"\(filePathKey)\"\r\n")
@@ -253,6 +351,8 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
 }
+
+
 
 extension Dictionary {
     func percentEncoded() -> Data? {

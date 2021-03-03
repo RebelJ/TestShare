@@ -66,9 +66,8 @@ class LoginViewController: UIViewController {
                            {
                             if let userId = jsonResult["uid"] as? String{
                                 print(userId)
-                                
                                 //login successful
-                                UserDefaults.standard.set(true, forKey: "isUserLoggedin");
+                                UserDefaults.standard.set(true, forKey: "isUserLoggedIn");
                                 UserDefaults.standard.set(userId, forKey: "userId");
                                 UserDefaults.standard.synchronize();
                                 
