@@ -21,20 +21,9 @@ class RegisterPageViewController: UIViewController {
     
     @IBOutlet weak var userNameTextField: UITextField!
     
-    @IBOutlet weak var userNumeroTextField: UITextField!
+   
     
-    @IBOutlet weak var userAdressTextField: UITextField!
-    
-    @IBOutlet weak var userCodePostalTextField: UITextField!
-    
-    @IBOutlet weak var userPaysTextField: UITextField!
-    
-    @IBOutlet weak var userBatimentTextField: UITextField!
-    
-    @IBOutlet weak var userRegionTextField: UITextField!
-    
-    @IBOutlet weak var userTelTextField: UITextField!
-    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,30 +31,28 @@ class RegisterPageViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    
+    
+    
+    
+    @IBAction func userRegisteredButtonTapped(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil);
+    }
 
     @IBAction func registerButtonTapped(_ sender: AnyObject) {
         
         
         let resultValue="";
-       
-        
-        
         let userEmail = userEmailTextField.text;
         let userPassword = userPasswordTextField.text;
         let userRepeatPassword = userRepeatPasswordTextField.text;
-       
+        
         let userFirstName = userFirstNameTextFiled.text;
         let userName = userNameTextField.text;
-        let userNumero = userNumeroTextField.text;
-        let userAdress = userAdressTextField.text;
-        let userCodePostal = userCodePostalTextField.text;
-        let userPays = userPaysTextField.text;
-        let userBatiment = userBatimentTextField.text;
-        let userRegion = userRegionTextField.text;
-        let userTel = userTelTextField.text;
+     
         
         
-        if((userPassword ?? "").isEmpty ||  (userRepeatPassword ?? "").isEmpty ||  (userEmail ?? "").isEmpty ||  (userFirstName ?? "").isEmpty ||  (userName ?? "").isEmpty ||  (userNumero ?? "").isEmpty ||  (userAdress ?? "").isEmpty ||  (userCodePostal ?? "").isEmpty ||  (userPays ?? "").isEmpty ){
+        if((userPassword ?? "").isEmpty ||  (userRepeatPassword ?? "").isEmpty ||  (userEmail ?? "").isEmpty ||  (userFirstName ?? "").isEmpty ||  (userName ?? "").isEmpty){
             displayMyAlertMessage(userMessage: "All Field are required");
             return;
             
@@ -94,7 +81,7 @@ class RegisterPageViewController: UIViewController {
         
      
         request.httpMethod = "POST";
-        request.httpBody = parameters.percentEncoded()!
+        request.httpBody = parameters.percentEncoded()
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -113,30 +100,41 @@ class RegisterPageViewController: UIViewController {
                 
                         let error = personDictionary["error"] as? Bool;
                         let uid = personDictionary["uid"] as? String;
-                        print(error!);
-                        print(uid!);
+                        let error_msg = personDictionary["error_msg"];
+            
+//                        print(error!);
+                     //   print(uid!);
                         
                         var isUserRegistered:Bool = false;
+                        var titleToDisplay = "Well Done"
+                        var messageToDisplay = "Registration is successful, Thanks you" ;
                         
-                        if(error == false){ isUserRegistered = true; }
                         
-                        var messageToDisplay = jsonResultReg["message"] as? [String];
+                        if(error == false){
+                            isUserRegistered = true;
+                        }
+                        
+                        
                         if(!isUserRegistered)
                         {
-                            messageToDisplay = jsonResultReg["message"] as? [String];
+                            messageToDisplay = error_msg as! String;
+                            titleToDisplay = "Warning"
+                            
+                            
                         }
-                    
                         
                         DispatchQueue.global(qos: .background).async {
                             // Background Thread
                             DispatchQueue.main.async {
-                                // Run UI Updates
-                                var myAlert = UIAlertController(title:"Alert",message: messageToDisplay as? String, preferredStyle: UIAlertController.Style.alert);
-                                let okAction = UIAlertAction(title: "ok", style: UIAlertAction.Style.default){ action in
-                                    self.dismiss(animated: true, completion: nil);
-                                }
-                                myAlert.addAction(okAction);
-                                self.present(myAlert, animated: true, completion: nil);
+                    
+                                    // Run UI Updates
+                                    let myAlert = UIAlertController(title: titleToDisplay,message: messageToDisplay as? String, preferredStyle: UIAlertController.Style.alert);
+                                    
+                                    let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default){ action in
+                                        if(isUserRegistered){ self.dismiss(animated: true, completion: nil);}
+                                    }
+                                 myAlert.addAction(okAction);
+                                    self.present(myAlert, animated: true, completion: nil);
                             }
                         }
                             
@@ -152,27 +150,6 @@ class RegisterPageViewController: UIViewController {
             }
         }
         task.resume()
-        
-        
-        /*
-//        Store data
-        UserDefaults.standard.set(userEmail , forKey:"userEmail");
-        UserDefaults.standard.set(userPassword , forKey:"userPassword");
-        UserDefaults.standard.synchronize();
-        
-        
-        
-//        Diplay confirmation message
-        
-        
-        var  myAlert = UIAlertController(title: "Alert", message: "Registration is successful, Thanks you", preferredStyle: UIAlertController.Style.alert);
-        let okAction = UIAlertAction(title: "ok", style: UIAlertAction.Style.default){ action in
-            self.dismiss(animated: true, completion:nil);
-        }
-        
-        myAlert.addAction(okAction);
-        self.present(myAlert, animated:true, completion:nil);
-        */
         
     }
     

@@ -61,25 +61,51 @@ class LoginViewController: UIViewController {
                 
                             let error = personDictionary["error"] as? Bool;
                             print(error!);
+                            let error_msg = personDictionary["error_msg"];
                         
                            if(error == false)
                            {
                             if let userId = jsonResult["uid"] as? String{
                                 print(userId)
+                                
+                       //         UserDefaults(suiteName: "group.POP.TestShare")?.removeObject(forKey: "userId")
                                 //login successful
                                 UserDefaults.standard.set(true, forKey: "isUserLoggedIn");
                                 UserDefaults.standard.set(userId, forKey: "userId");
                                 UserDefaults.standard.synchronize();
                                 
-                             //   let userStorage = UserDefaults.standard.string(forKey: "userId")
+                                if let userDef = UserDefaults(suiteName: "group.POP.TestShare"){
+                                    
+                                    
+                                    userDef.set(userId, forKey: "userId")
+                                    userDef.synchronize()
+                                }
                                 DispatchQueue.main.async{
                                     self.dismiss(animated: true, completion: nil);
                                 }
-                            }
+                         
                             
                            }
                     }
+                     else if (error != false){
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            // Background Thread
+                            DispatchQueue.main.async {
                     
+                                    // Run UI Updates
+                                    let myAlert = UIAlertController(title: "Alert",message: error_msg as? String, preferredStyle: UIAlertController.Style.alert);
+                                    
+                                    let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default){ action in
+//                                                self.dismiss(animated: true, completion: nil);
+                                    }
+                                 myAlert.addAction(okAction);
+                                    self.present(myAlert, animated: true, completion: nil);
+                            }
+                        }
+                        
+                    }
+                }
                 }
                
             } catch let error {

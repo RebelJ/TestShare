@@ -13,11 +13,45 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+          if let scheme = url.scheme, scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame, let page = url.host {
+            var parameters: [String: String] = [:]
+            URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
+                parameters[$0.name] = $0.value
+            }
+
+            
+              for parameter in parameters where parameter.key.caseInsensitiveCompare("url") == .orderedSame {
+                  UserDefaults().set(parameter.value, forKey: "incomingURL")
+              }
+          }
+
+          return true
+      }
+    
+    
+//    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+//            if let scheme = url.scheme,
+//                scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame,
+//                let page = url.host {
+//
+//                var parameters: [String: String] = [:]
+//                URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
+//                    parameters[$0.name] = $0.value
+//                }
+//
+//                print("redirect(to: \(page), with: \(parameters))")
+//            }
+//
+//            return true
+//        }
+    
+    
+    
+    
+    
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-     
-        
         // Override point for customization after application launch.
         return true
     }

@@ -19,6 +19,8 @@
 		F919A88A25C1C03C0058B55B /* ProfilViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F919A88925C1C03C0058B55B /* ProfilViewController.swift */; };
 		F919A89025C1C0E50058B55B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F919A88F25C1C0E50058B55B /* SettingsViewController.swift */; };
 		F92B01F325EFA10E0056C72E /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92B01DF25EE4B7A0056C72E /* ImageStore.swift */; };
+		F979454825F8CB25002676F5 /* OrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F979454725F8CB25002676F5 /* OrderViewController.swift */; };
+		F9970201260102C2001AECD2 /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9970200260102C2001AECD2 /* DarwinNotificationCenter.swift */; };
 		F9B83F6A25BF0A2F0054E9BB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B83F6925BF0A2F0054E9BB /* LoginViewController.swift */; };
 		F9B83F7025BF0A520054E9BB /* RegisterPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B83F6F25BF0A520054E9BB /* RegisterPageViewController.swift */; };
 		F9DF33A525A5F73D008A9C21 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DF33A425A5F73D008A9C21 /* AppDelegate.swift */; };
@@ -30,7 +32,6 @@
 		F9DF33BC25A5F73E008A9C21 /* TestShareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DF33BB25A5F73E008A9C21 /* TestShareTests.swift */; };
 		F9DF33C725A5F73E008A9C21 /* TestShareUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DF33C625A5F73E008A9C21 /* TestShareUITests.swift */; };
 		F9DF33DE25A5F7E2008A9C21 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DF33DD25A5F7E2008A9C21 /* ShareViewController.swift */; };
-		F9DF33E125A5F7E2008A9C21 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F9DF33DF25A5F7E2008A9C21 /* MainInterface.storyboard */; };
 		F9DF33E525A5F7E2008A9C21 /* ShareExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F9DF33DB25A5F7E2008A9C21 /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -85,6 +86,8 @@
 		BA6D01ACAB2A7A2B47FC1944 /* Pods_TestShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C49CCE874A3EE4A3305C84FD /* Pods-TestShare-TestShareUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestShare-TestShareUITests.debug.xcconfig"; path = "Target Support Files/Pods-TestShare-TestShareUITests/Pods-TestShare-TestShareUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D75D483E2D3FB0C7C7E0A4A4 /* Pods-TestShareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestShareTests.release.xcconfig"; path = "Target Support Files/Pods-TestShareTests/Pods-TestShareTests.release.xcconfig"; sourceTree = "<group>"; };
+		F90F777F25F1117E00876DDB /* TestShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestShare.entitlements; sourceTree = "<group>"; };
+		F90F778425F1118E00876DDB /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		F912611125DFCB4D00F782F2 /* PhotoFilm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFilm.swift; sourceTree = "<group>"; };
 		F912611725DFCBF500F782F2 /* Archives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archives.swift; sourceTree = "<group>"; };
 		F912611D25DFCC3400F782F2 /* CurrentPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentPhoto.swift; sourceTree = "<group>"; };
@@ -93,6 +96,10 @@
 		F919A88925C1C03C0058B55B /* ProfilViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilViewController.swift; sourceTree = "<group>"; };
 		F919A88F25C1C0E50058B55B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		F92B01DF25EE4B7A0056C72E /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
+		F979454725F8CB25002676F5 /* OrderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewController.swift; sourceTree = "<group>"; };
+		F979455F25F950A7002676F5 /* TestShareRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestShareRelease.entitlements; sourceTree = "<group>"; };
+		F979456425F9524A002676F5 /* ShareExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtensionRelease.entitlements; sourceTree = "<group>"; };
+		F9970200260102C2001AECD2 /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		F9B83F6925BF0A2F0054E9BB /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F9B83F6F25BF0A520054E9BB /* RegisterPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPageViewController.swift; sourceTree = "<group>"; };
 		F9DF33A125A5F73D008A9C21 /* TestShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,7 +118,6 @@
 		F9DF33C825A5F73E008A9C21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F9DF33DB25A5F7E2008A9C21 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9DF33DD25A5F7E2008A9C21 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		F9DF33E025A5F7E2008A9C21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		F9DF33E225A5F7E2008A9C21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -206,6 +212,8 @@
 				F919A88325C1AB630058B55B /* MenuController.swift */,
 				F9DF33A825A5F73D008A9C21 /* HomeViewController.swift */,
 				F915D66B25DD1AE900EB1700 /* SlideInTransition.swift */,
+				F979454725F8CB25002676F5 /* OrderViewController.swift */,
+				F9970200260102C2001AECD2 /* DarwinNotificationCenter.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -237,6 +245,8 @@
 		F9DF33A325A5F73D008A9C21 /* TestShare */ = {
 			isa = PBXGroup;
 			children = (
+				F979455F25F950A7002676F5 /* TestShareRelease.entitlements */,
+				F90F777F25F1117E00876DDB /* TestShare.entitlements */,
 				F92BC50D25DC099900F7F15A /* Controller */,
 				F92BC50C25DC098C00F7F15A /* View */,
 				F92BC50B25DC097700F7F15A /* Model */,
@@ -269,9 +279,10 @@
 		F9DF33DC25A5F7E2008A9C21 /* ShareExtension */ = {
 			isa = PBXGroup;
 			children = (
+				F979456425F9524A002676F5 /* ShareExtensionRelease.entitlements */,
+				F90F778425F1118E00876DDB /* ShareExtension.entitlements */,
 				F92B01DF25EE4B7A0056C72E /* ImageStore.swift */,
 				F9DF33DD25A5F7E2008A9C21 /* ShareViewController.swift */,
-				F9DF33DF25A5F7E2008A9C21 /* MainInterface.storyboard */,
 				F9DF33E225A5F7E2008A9C21 /* Info.plist */,
 			);
 			path = ShareExtension;
@@ -433,7 +444,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F9DF33E125A5F7E2008A9C21 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,7 +581,9 @@
 			files = (
 				F912611225DFCB4D00F782F2 /* PhotoFilm.swift in Sources */,
 				F912611825DFCBF500F782F2 /* Archives.swift in Sources */,
+				F979454825F8CB25002676F5 /* OrderViewController.swift in Sources */,
 				F912611E25DFCC3400F782F2 /* CurrentPhoto.swift in Sources */,
+				F9970201260102C2001AECD2 /* DarwinNotificationCenter.swift in Sources */,
 				F915D66C25DD1AE900EB1700 /* SlideInTransition.swift in Sources */,
 				F9B83F6A25BF0A2F0054E9BB /* LoginViewController.swift in Sources */,
 				F9DF33A925A5F73D008A9C21 /* HomeViewController.swift in Sources */,
@@ -644,14 +656,6 @@
 				F9DF33B025A5F73E008A9C21 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		F9DF33DF25A5F7E2008A9C21 /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F9DF33E025A5F7E2008A9C21 /* Base */,
-			);
-			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -780,6 +784,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TestShare/TestShare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7598CYCPL3;
 				INFOPLIST_FILE = TestShare/Info.plist;
@@ -801,6 +806,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TestShare/TestShareRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7598CYCPL3;
 				INFOPLIST_FILE = TestShare/Info.plist;
@@ -907,6 +913,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0A8C92A92CCE71DD134B410C /* Pods-ShareExtension.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7598CYCPL3;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
@@ -927,6 +934,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 374EEC2FFDBE4DB4E30829F1 /* Pods-ShareExtension.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtensionRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7598CYCPL3;
 				INFOPLIST_FILE = ShareExtension/Info.plist;

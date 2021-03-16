@@ -8,6 +8,7 @@
 import UIKit
 import Social
 import MobileCoreServices
+import CoreData
 //import TestShare
 
 
@@ -16,29 +17,86 @@ class ShareViewController: SLComposeServiceViewController {
     
     let m_inputItemCount = 0 // Keeps track of the number of attachments we have opened asynchronously.
     var m_invokeArgs: String? = nil // A string to be passed to your AIR app with information about the attachments.
-    let APP_SHARE_GROUP = "group.POP.TestShare.ShareExtension"
+    let APP_SHARE_GROUP = "group.POP.TestShare"
     let APP_SHARE_URL_SCHEME = "schemename"
-    let m_oldAlpha: CGFloat = 1.0 // Keeps the original transparency of the Post dialog for when we want to hide it.
+//    let APP_SHARE_URL_SCHEME = "schemename"
+//    let m_oldAlpha: CGFloat = 1.0 // Keeps the original transparency of the Post dialog for when we want to hide it.
     
     
-   
-    
-    
+    private let typeText = String(kUTTypeText)
+    private let typeURL = String(kUTTypeURL)
+    private var appURLString = "TestShare://home?url="
+    private let groupName = "group.POP.TestShare"
+    private let urlDefaultName = "incomingURL"
+   // private var idImage = 0
+    /*
     override func viewDidAppear(_ animated: Bool) {
          super.viewDidAppear(animated)
-         self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+        passSelectedItemsToApp();
+        
+        // Get the all encompasing object that holds whatever was shared. If not, dismiss view.
+              guard let extensionItem = extensionContext?.inputItems.first as? NSExtensionItem,
+                  let itemProvider = extensionItem.attachments?.first else {
+                      self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+                      return
+                    }
+        
+                     // Check if object is of type image/jpeg
+                    if itemProvider.hasItemConformingToTypeIdentifier("public.jpeg") {
+                         handleIncomingImage(itemProvider: itemProvider)
+                     } else {
+                         print("Error: No image found")
+                         self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+                     }
+            
      }
     
-    @objc func openImage(_ url: URL) -> Bool {
-           var responder: UIResponder? = self
-           while responder != nil {
-               if let application = responder as? UIApplication {
-                   return application.perform(#selector(openImage(_:)), with: url) != nil
-               }
-               responder = responder?.next
-           }
-           return false
-       }
+    
+        private func handleIncomingImage(itemProvider: NSItemProvider) {
+            
+            
+            itemProvider.loadItem(forTypeIdentifier: "public.jpeg", options: nil) { (item, error) in
+            if let error = error {
+                print("URL-Error: \(error.localizedDescription)")
+            }
+
+            if let url = item as? NSURL, let urlString = url.absoluteString {
+                self.saveURLString(urlString)
+               //self.appURLString += urlString
+            }
+
+              self.openMainApp()
+            }
+        }
+        private func openMainApp() {
+            self.extensionContext?.completeRequest(returningItems: nil, completionHandler: { _ in
+                guard let url = URL(string: self.appURLString) else { return }
+                _ = self.openImage(url)
+            })
+        }
+    
+    
+        private func saveURLString(_ urlString: String) {
+            UserDefaults(suiteName: self.groupName)?.set(urlString, forKey: self.urlDefaultName)
+        }
+    
+    
+    */
+    
+    //  Function must be named exactly like this so a selector can be found by the compiler!
+    //  Anyway - it's another selector in another instance that would be "performed" instead.
+    @objc func openURL(_ url: URL) -> Bool {
+        var responder: UIResponder? = self
+        while responder != nil {
+            if let application = responder as? UIApplication {
+                return application.perform(#selector(openURL(_:)), with: url) != nil
+            }
+            responder = responder?.next
+        }
+        return false
+    }
+    
+    
 
     override func isContentValid() -> Bool {
         // Do validation of contentText and/or NSExtensionContext attachments here
@@ -76,67 +134,61 @@ class ShareViewController: SLComposeServiceViewController {
                inputItem.loadItem(forTypeIdentifier: "public.jpeg", options: nil,
                         completionHandler: { data, error in
                      
-                            if nil != error {
-                                if let error = error {
-                                    print("There was an error retrieving the attachments: \(error)")
-                                }
-                                return
+                        if nil != error {
+                            if let error = error {
+                                print("There was an error retrieving the attachments: \(error)")
                             }
-                            
-                            
-                            
-                            var imgData: UIImage?
-                            
-                            
-                            if let someUrl = data as? URL {
-                                do {
-                                    imgData = UIImage(contentsOfFile: someUrl.path)
-                                } catch {
-                                    print(error)
-                                }
-                            }
-                            
-                         
-                          
-
-                            
-                           
-                      
-                        // so we temporary copy them to a folder which both the extension and the app can access:
-                        let filePath = self.saveImage(toAppGroupFolder: imgData as? UIImage, imageIndex: itemIdx)
-
-                            
-                            let userUIDStorage = "testasupp"/*UserDefaults.standard.string(forKey: "userId")*/
+                            return
+                        }
+                        var imgData: UIImage?
+            
+                        if let someUrl = data as? URL {
+                            imgData = UIImage(contentsOfFile: someUrl.path)
+                        } else if let someUrl = data as? NSData? {
+                            imgData = UIImage(data: someUrl as! Data)
+                        }
                         
-                            let parameters : [String : String] = [
-                                "idUser": userUIDStorage,
-                                /*"filename": filePath!*/]
-                            
-                        self.imageUploadRequest(uploadImage: imgData as? UIImage, param : parameters)
+                        
+                        
+                         //   let userUIDStorage = UserDefaults(suiteName: "group.POP.TestShare")
+                           // if let Userid = userUIDStorage?.string(forKey: "userId") {
+                               
+                       
+                            let Userid = "test"
+
+                               
+                                let parameters : [String : String] = [
+                                    "idUser": Userid,
+                                    /*"filename": filePath!*/]
+            
+
+                            self.imageUploadRequest(uploadImage: imgData as? UIImage, param : parameters)
+                                                 
+//                                let idStoreImage = UserDefaults.standard.integer(forKey: "idImage")
+                        
+                                
+                          //      UserDefaults(suiteName: "group.POP.TestShare")?.removeObject(forKey: "userId")
+                                
+                          //  }
                             
                         // If we have reached the last attachment, it's time to hand control to the app:
                         itemIdx += 1
                             if itemIdx >= attachments.count {
-                            
                             print("done")
-                          //  invokeApp(m_invokeArgs)
+//                            self.invokeApp(self.m_invokeArgs)
                         }
-                            
-                            imgData = nil
-                            
-                            
-                            
+                            //imgData = nil
                     })
             }
         }
         
        
      }
-    
+    /*
     override func configurationItems() -> [Any]! {
         // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
         return []
-    }
+    }*/
     
     
     func addImagePath(toArgumentList imagePath: String?) {
@@ -152,28 +204,6 @@ class ShareViewController: SLComposeServiceViewController {
     }
     
     
-     /*func store(image: UIImage?, name: String) throws {
-        
-        guard let imageData = image?.pngData() else {
-            throw NSError(domain: "com.thecodedself.imagestore", code: 0, userInfo: [NSLocalizedDescriptionKey: "The image could not be created"])
-        
-        }
-        
-        guard let imagePath = path(for: name) else {
-            throw NSError(domain: "com.thecodedself.imagestore", code: 0, userInfo: [NSLocalizedDescriptionKey: "The image path could not be retrieved"])
-        }
-        
-        try imageData.write(to: imagePath)
-    }
-    
-    private  func path(for imageName: String, fileExtension: String = "png") -> URL? {
-        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        return directory?.appendingPathComponent("\(imageName).\(fileExtension)")
-    }
-    */
-    
-    
-    
 
     func saveImage(
         toAppGroupFolder image: UIImage?,
@@ -181,16 +211,11 @@ class ShareViewController: SLComposeServiceViewController {
     ) -> String? {
         assert(nil != image)
         
-        
-        
-       try! ImageStore.store(image: image!, name: "yes")
-        
-        
-        
-      ImageStore.retrieve(imageNamed: "yes")
-        
-        
-        
+        let alertView = UIAlertController(title: "Export", message: " ", preferredStyle: .alert)
+           
+
+//       try! ImageStore.store(image: image!, name: "yes")
+//      ImageStore.retrieve(imageNamed: "yes")
         
         let jpegData = image?.jpegData(compressionQuality: 1.0)
 
@@ -204,46 +229,43 @@ class ShareViewController: SLComposeServiceViewController {
         if let jpegData = jpegData {
             NSData(data: jpegData).write(toFile: filePath, atomically: true)
         }
+        
+        
+        UserDefaults.standard.set(filePath, forKey: "url");
+        UserDefaults.standard.synchronize();
+        
 
         // -- Store image url to NSUserDefaults
         // Boucle d'enregistrement image
-        var defaults = UserDefaults(suiteName: "group.com.schemename.nameofyourshareappgroup")
-        defaults?.set(filePath, forKey: "url")
-        defaults?.synchronize()
+        if let defaults = UserDefaults(suiteName: "group.POP.TestShare"){
+            defaults.set(filePath as? String, forKey: "url")
+            defaults.synchronize()
+        }
+        
+        
+        //CoreData storage
+        let persistentContainer = NSPersistentContainer(name: "Collect")
+        let storeURL = URL.storeURL(for: "group.POP.TestShare", databaseName: "Fleur")
+        let storeDescription = NSPersistentStoreDescription(url: storeURL)
+        persistentContainer.persistentStoreDescriptions = [storeDescription]
+        
+       
+       
+        
+//        do {
+//                       let jsonData : Data = try JSONSerialization.data(
+//                           withJSONObject: [
+//                               "action" : "incoming-files"
+//                               ],
+//                           options: JSONSerialization.WritingOptions.init(rawValue: 0))
+//                       let jsonString = (NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+//                       let result = self.openURL(URL(string: "TestShare://POP.TestShare?\(jsonString!)")!)
+//                   } catch {
+//                       alertView.message = "Error: \(error.localizedDescription)"
+//                   }
 
         return filePath
-        
-/*
-        let key = "FavoritesContactStandardImage"
-
-        func getImageKey(_ index:Int) -> String {
-            return "\(key)\(index)"
-        }
-
-        func saveImages(_ images:[UIImage]) {
-            var list = UserDefaults.standard.array(forKey: key) as? [String] ?? [String]()
-            var index = list.count
-
-            for image in images {
-                let imgKey = getImageKey(index)
-                saveImage(imgKey, image)
-                list.append(imgKey)
-                UserDefaults.standard.set(list, forKey: key)
-                UserDefaults.standard.synchronize()
-                index += 1
-            }
-        }
-
-        func saveImage(_ imageName:String, _ image:UIImage) {
-            let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-            let imgPath = URL(fileURLWithPath: path.appendingPathComponent(imageName))
-
-            do {
-                try UIImagePNGRepresentation(image)?.write(to: imgPath, options: .atomic)
-            } catch let error {
-                print(error.localizedDescription)
-            }
-        }*/
+    
         }
 
 
@@ -269,24 +291,40 @@ class ShareViewController: SLComposeServiceViewController {
         //myActivityIndicator.startAnimating();
 
         let task = URLSession.shared.dataTask(with: request) {
-                (data, response, error) -> Void in
+                data, response, error in
+                    
+                    if error != nil {
+                        print("error=\(error)")
+                        return
+                    }
             do {
-                
-                if let data = data {
+//                    // You can print out response object
+//                    print("******* response = \(response!)")
+//
+//                    print(data!.count)
+//                    // you can use data here
+//
+//                    // Print out reponse body
+//                    let responseString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+//                    print("****** response data = \(responseString!)")
 
-                    // You can print out response object
-                    print("******* response = \(response!)")
+//                    let json =  try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? NSDictionary
+                    
+                    if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: [])as? NSDictionary{
+                        print("json value \(jsonResult)")
+                    
+                    if let idImage = jsonResult["idImage"] as? Int{
+                        print(idImage)
+                        
+//                        UserDefaults.standard.set(idImage, forKey: "idImage");
+//                        UserDefaults.standard.synchronize();
+                        
+                        
+                        // so we temporary copy them to a folder which both the extension and the app can access:
+                        let filePath = self.saveImage(toAppGroupFolder: uploadImage as? UIImage, imageIndex: idImage)
+                        self.addImagePath(toArgumentList: filePath)
 
-                    print(data.count)
-                    // you can use data here
-
-                    // Print out reponse body
-                    let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-                    print("****** response data = \(responseString!)")
-
-                    let json =  try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? NSDictionary
-
-                    print("json value \(json)")
+                    
 
                     //var json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers, error: &err)
 
@@ -303,8 +341,9 @@ class ShareViewController: SLComposeServiceViewController {
                         }
                     }
 
+                    }
+
                 }
-                
             } catch let error {
                    //Perform the error handling here
                 print("Failed to load: \(error.localizedDescription)")
@@ -312,6 +351,7 @@ class ShareViewController: SLComposeServiceViewController {
         }
         task.resume()
         print("task resume")
+        
 
 
     }
@@ -349,6 +389,97 @@ class ShareViewController: SLComposeServiceViewController {
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().uuidString)"
     }
+    
+
+    func addImagePath(ToArgumentList imagePath: NSString?)
+    {
+        assert( nil != imagePath );
+
+        // The list of arguments we will pass to the AIR app when we invoke it.
+        // It will be a comma-separated list of file paths: /path/to/image1.jpg,/path/to/image2.jpg
+        if ( nil == m_invokeArgs)
+        {
+            m_invokeArgs = imagePath as String?;
+        }
+        else
+        {
+            m_invokeArgs = NSString(format: "%,@%@,%@", m_invokeArgs as! CVarArg, imagePath as! CVarArg) as String ;
+        }
+    }
+
+    
+           
+   /* func invokeApp(_ invokeArgs: String?) {
+        // Prepare the URL request
+        // this will use the custom url scheme of your app
+        // and the paths to the photos you want to share:
+        let urlString = "\(APP_SHARE_URL_SCHEME)://\((nil == invokeArgs ? "" : invokeArgs) ?? "")"
+        let url = URL(string: urlString)
+
+        let className = "UIApplication"
+        if NSClassFromString(className) != nil {
+           let object = NSClassFromString(className)?.perform(#selector(UIApplication.shared))
+             object?.perform(#selector(UIApplication.openURL(_:)), with: url)
+        }
+
+        // Now let the host app know we are done, so that it unblocks its UI:
+        super.didSelectPost()
+    }*/
+    /*
+            #if HIDE_POST_DIALOG
+            func configurationItems() -> [Any]! {
+                // Comment out this whole function if you want the Post dialog to show.
+                passSelectedItemsToApp()
+
+                // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
+                return []
+            }
+
+            #endif
+            
+           
+            
+            
+            #ifdef HIDE_POST_DIALOG
+            - ( void ) willMoveToParentViewController: ( UIViewController * ) parent
+            {
+                // This is called at the point where the Post dialog is about to be shown.
+                // Make it transparent, so we don't see it, but first remember how transparent it was originally:
+
+                m_oldAlpha = [ self.view alpha ];
+                [ self.view setAlpha: 0.0 ];
+            }
+            #endif
+
+            #ifdef HIDE_POST_DIALOG
+            - ( void ) didMoveToParentViewController: ( UIViewController * ) parent
+            {
+                // Restore the original transparency:
+                [ self.view setAlpha: m_oldAlpha ];
+            }
+            #endif
+            #ifdef HIDE_POST_DIALOG
+            - ( id ) init
+            {
+                if ( self = [ super init ] )
+                {
+                    // Subscribe to the notification which will tell us when the keyboard is about to pop up:
+                    [ [ NSNotificationCenter defaultCenter ] addObserver: self selector: @selector( keyboardWillShow: ) name: UIKeyboardWillShowNotification    object: nil ];
+                }
+
+                return self;
+            }
+            #endif
+            #ifdef HIDE_POST_DIALOG
+            - ( void ) keyboardWillShow: ( NSNotification * ) note
+            {
+                // Dismiss the keyboard before it has had a chance to show up:
+                [ self.view endEditing: true ];
+            }
+            #endif
+            @end
+        */
+        
 
 }
 
@@ -385,5 +516,29 @@ extension NSMutableData {
                 append(data)
             }
         }
+}
+
+
+public extension URL {
+
+    /// Returns a URL for the given app group and database pointing to the sqlite database.
+    static func storeURL(for appGroup: String, databaseName: String) -> URL {
+        guard let fileContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+            fatalError("Shared file container could not be created.")
+        }
+
+        return fileContainer.appendingPathComponent("\(databaseName).sqlite")
+    }
+}
+extension NSPersistentContainer {
+    // Configure change event handling from external processes.
+    func observeAppExtensionDataChanges() {
+        DarwinNotificationCenter.shared.addObserver(self, for: .didSaveManagedObjectContextExternally, using: { [weak self] (_) in
+            // Since the viewContext is our root context that's directly connected to the persistent store, we need to update our viewContext.
+            self?.viewContext.perform {
+                self?.viewContextDidSaveExternally()
+            }
+        })
+    }
 }
 

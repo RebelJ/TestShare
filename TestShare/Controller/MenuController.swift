@@ -25,6 +25,7 @@ enum SideMenuItem: Int {
     case Home
     case Profil
     case Settings
+    case Disconnect
 }
 
   

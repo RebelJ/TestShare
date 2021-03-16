@@ -11,71 +11,148 @@ import UIKit
 
 
   
-class HomeViewController: UIViewController/*, MenuControllerDelegate*/ {
+class HomeViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
     var myCollectionView:UICollectionView?
    
     private let settingsController = SettingsViewController()
     private let profilController = ProfilViewController()
-  //  private let imageStore = ImageStore()
-    
-    
-   // private var sideMenu: SideMenuNavigationController?
-    
     
     let transition = SlideInTransition()
     var topView: UIView?
     
-
+    @IBOutlet weak var labelID: UILabel!
+    
+    @IBOutlet weak var imageField: UIImageView!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-   
-        /*
-        //Init menu
-        let menu = MenuController(with: ["Home","Info","Settings"])
-        menu.delegate = self
-        sideMenu = SideMenuNavigationController(rootViewController: menu)
-        sideMenu?.leftSide = true
-        SideMenuManager.default.leftMenuNavigationController = sideMenu
-        SideMenuManager.default.addPanGestureToPresent(toView: view)
-        
-        //diplay User Info
-//        let userUIDStorage = UserDefaults.standard.string(forKey: "userId")
-//        displayUserInfo.text = userUIDStorage
-//        
-//
-            */
-        
-        
-        
-         let view = UIView()
-         view.backgroundColor = .white
-             
-         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-         layout.sectionInset = UIEdgeInsets(top: 200, left: 20, bottom: 10, right: 20)
-         layout.itemSize = CGSize(width: 90, height: 90)
-         
-         myCollectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-         myCollectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "MyCell")
-         myCollectionView?.backgroundColor = UIColor.white
-        
-             
+//        setupNotification()
+
+        //collection view of image
+        let view = UIView()
+        view.backgroundColor = .white
+
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 200, left: 20, bottom: 10, right: 20)
+        layout.itemSize = CGSize(width: 90, height: 90)
+        myCollectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        myCollectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "MyCell")
+        myCollectionView?.backgroundColor = UIColor.white
         myCollectionView?.dataSource = self
         myCollectionView?.delegate = self
-      
-        view.addSubview(myCollectionView ?? UICollectionView())
+        self.view.addSubview(myCollectionView ?? UICollectionView())
+
+
+        //UserID from local storage
+        let user =   UserDefaults.standard.string(forKey: "userId");
+        
+        let incomingUser = UserDefaults(suiteName: "group.POP.TestShare")
+        if let userStore = incomingUser?.string(forKey: "userId") {
+
+        let txtField: UITextField = UITextField(frame: CGRect(x: 250, y: 250, width: 100.00, height: 30.00));
+        self.view.addSubview(txtField)
+        txtField.borderStyle = UITextField.BorderStyle.line
+        txtField.text = userStore
+        txtField.backgroundColor = .red
+
+        }
         
         
         
- //       let imageName = "IMG_20201219_180627"
-        
-   
-             
-        self.view = view
+        let incomingURL = UserDefaults(suiteName: "group.POP.TestShare")
+        if let imageStore = incomingURL?.string(forKey: "url") {
+            print("Available Data")
+//            let img = (incomingURL?.value(forKey: "url") as! Data)
+            self.imageField.image = UIImage(data : imageStore as! Data)
+//            UserDefaults(suiteName: "POP.TestShare.ShareExtension")?.removeObject(forKey: "url")
+        }
         
         addChildControllers()
     }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
+    {
+        print("User tapped on item \(indexPath.row)")
+        
+        
+    }
+    
+    // Number of cell
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return images.count
+    }
+    //make a cell for each cell index path
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        //get  a reference to our storyboard cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: /*reuseIdentifier*/"MyCell", for: indexPath as IndexPath)
+
+        
+      
+        cell.layer.borderColor = UIColor.black.cgColor
+        cell.layer.borderWidth = 1
+        cell.layer.cornerRadius = 8
+        let imageview:UIImageView=UIImageView(frame: CGRect(x: 0, y: 0, width: cell.frame.width,height: cell.frame.width))
+        imageview.layer.cornerRadius=8
+        let image:UIImage = UIImage(named: images[indexPath.row]) ?? UIImage(named: "33.png") as! UIImage
+        imageview.image = image
+        cell.contentView.addSubview(imageview)
+        
+        return cell
+    }
+    
+    //for the collectionView
+    var images: [String] = [
+        "11.png", "10.png", "11.png",
+        "10.png", "10.png", "10.png",
+        "11.png", "11.png", "11.png",
+        "10.png", "11.png", "10.png",
+        "10.png", "10.png", "11.png",
+        "61.png", "11.png", "10.png",
+        "11.png", "72.png", "10.png",
+    ]
+    
+    deinit {
+          NotificationCenter.default.removeObserver(self)
+      }
+
+      func setupNotification() {
+          NotificationCenter.default.addObserver(
+              self,
+              selector: #selector(setUrl),
+              name: UIApplication.didBecomeActiveNotification,
+              object: nil
+          )
+      }
+    
+    
+    //Verifiy if user is loggedin
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+       // self.setUrl()
+        let isUserLoggedIn = UserDefaults.standard.bool(forKey: "isUserLoggedIn")
+        if(!isUserLoggedIn){
+            self.performSegue(withIdentifier: "loginView", sender: self);
+        }
+        
+    }
+    
+    
+    
+    @objc func setUrl() {
+        
+        if let incomingURL = UserDefaults(suiteName: "group.POP.TestShare"){
+            let image1 = incomingURL.string(forKey: "url")
+            imageField.image = UIImage(data : image1 as! Data)
+            
+//            UserDefaults(suiteName: "POP.TestShare.ShareExtension")?.removeObject(forKey: "incomingURL")
+        }
+    }
+         
     
     /*
     
@@ -96,11 +173,7 @@ class HomeViewController: UIViewController/*, MenuControllerDelegate*/ {
     
     //add subView of the menu
     func addChildControllers() {
-        
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let settingsController: UIViewController = storyboard.instantiateViewController(withIdentifier: "SettingsIdView") as UIViewController
 
-        
         addChild(settingsController)
         addChild(profilController)
         
@@ -152,10 +225,6 @@ class HomeViewController: UIViewController/*, MenuControllerDelegate*/ {
         let title = String(describing: menuType).capitalized
         self.title = title
         
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let settingsController: UIViewController = storyboard.instantiateViewController(withIdentifier: "SettingsIdView") as UIViewController
-
-        
         topView?.removeFromSuperview()
         
         switch menuType {
@@ -165,126 +234,38 @@ class HomeViewController: UIViewController/*, MenuControllerDelegate*/ {
             
             self.settingsController.view.isHidden = true
             self.profilController.view.isHidden = true
-         //   view.backgroundColor = .blue
-         //   view.frame = self.view.bounds
-         //   self.topView = view
         
         case .Profil:
            // let view = UIView()
             
-            
             self.settingsController.view.isHidden = true
             self.profilController.view.isHidden = false
-                //    view.backgroundColor = .blue
-        //    view.frame = self.view.bounds
-          //  self.topView = view
             
         case .Settings:
-            
-            
           //  let view = UIView()
             
             self.settingsController.view.isHidden = false
             self.profilController.view.isHidden = true
-      //      view.backgroundColor = .yellow
-        //    view.frame = self.view.bounds
-         //   self.topView = view
+        
+        case .Disconnect:
+
+            UserDefaults.standard.set(false, forKey: "isUserLoggedin");
+            UserDefaults.standard.synchronize();
+            
+
+            performSegue(withIdentifier: "loginView", sender: self);
             
             
         default:
             break
         }
     }
-    
-    //Button menu action
- /*   func didSelectMenuItem(named: String) {
-        
-        sideMenu?.dismiss(animated: true, completion: { [weak self] in
-            self?.title = named
-            
-            
-            if named == "Home" {
-                self?.settingsController.view.isHidden = true
-                self?.infoController.view.isHidden = true
-                
-            }
-            else if named == "Info" {
-                self?.settingsController.view.isHidden = true
-                self?.infoController.view.isHidden = false
-            }
-            else if named == "Settings" {
-                self?.settingsController.view.isHidden = false
-                self?.infoController.view.isHidden = true
-            }
-        })
-            
-        
-    }*/
-    
-    
+  
   
     override func didReceiveMemoryWarning(){
         super.didReceiveMemoryWarning();
     }
     
-    
-    //Verifiy if user is loggedin
-    override func viewDidAppear(_ animated: Bool) {
-        
-        let isUserLoggedIn = UserDefaults.standard.bool(forKey: "isUserLoggedIn")
-        if(!isUserLoggedIn){
-            self.performSegue(withIdentifier: "loginView", sender: self);
-        }
-    }
-    
-    
-    static func delete(imageNamed name: String) {
-        guard let imagePath = path(for: name) else {
-            return
-        }
-        
-        try? FileManager.default.removeItem(at: imagePath)
-    }
-    
-    static func retrieve(imageNamed name: String) -> UIImage? {
-        guard let imagePath = path(for: name) else {
-            return nil
-        }
-        
-        return UIImage(contentsOfFile: imagePath.path)
-    }
-    
-    
-    private static func path(for imageName: String, fileExtension: String = "png") -> URL? {
-        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        return directory?.appendingPathComponent("\(imageName).\(fileExtension)")
-    }
-    
-    
-     
-  /*  @IBOutlet var UIImageViewDisplay: UIImageView!{
-        if let imageData = UserDefaults.standard.object(forKey: key) as? Data,
-                   let image = UIImage(data: imageData)
-                   {
-                        return image
-                    }
-    }
-    
-    
-    
-    
-    
-    
-    // Button Logout (A DEPLACER)
-    @IBAction func logoutButtonTapped(_ sender: AnyObject) {
-        
-        UserDefaults.standard.set(false, forKey: "isUserLoggedin");
-        UserDefaults.standard.synchronize();
-        
-        self.performSegue(withIdentifier: "loginView", sender: self);
-    }
- 
-     */
     
 }
 
@@ -299,32 +280,3 @@ extension HomeViewController: UIViewControllerTransitioningDelegate {
         return transition
     }
 }
-
-
-
-
-
-extension HomeViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 9 // How many cells to display
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let myCell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyCell", for: indexPath)
-        myCell.backgroundColor = UIColor.gray
-//        let image = myImages[indexPath.row]
-//        myCell.imageView.image = image
-        
-        return myCell
-    }
-}
-extension HomeViewController: UICollectionViewDelegate {
- 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-       print("User tapped on item \(indexPath.row)")
-    }
-}
-
-
-// Present the view controller in the Live View window
-//PlaygroundPage.current.liveView = HomeViewController()

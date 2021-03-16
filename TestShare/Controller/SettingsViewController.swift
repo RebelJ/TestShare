@@ -34,11 +34,7 @@ class SettingsViewController: UIViewController {
 
          // tell the childviewcontroller it's contained in it's parent
         controller.didMove(toParent: self)
-        
-    
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let settingsViewController = storyboard.instantiateViewController(withIdentifier: "SettingsIdView") as? SettingsViewController
-
+     
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let settingsController: UIViewController = storyboard.instantiateViewController(withIdentifier: "SettingsIdView") as UIViewController
@@ -63,20 +59,7 @@ class SettingsViewController: UIViewController {
         
     
         
-        
-        /*
-        
-        // Button Logout (A DEPLACER)
-        @IBAction func logoutButtonTapped(_ sender: AnyObject) {
-            
-            UserDefaults.standard.set(false, forKey: "isUserLoggedin");
-            UserDefaults.standard.synchronize();
-            
-            self.performSegue(withIdentifier: "loginView", sender: self);
-            
-        }
- 
-         */
+       
         
         let logoutButton = UIButton(type: UIButton.ButtonType.system) as UIButton
         logoutButton.frame = CGRect(x: 100, y: 350, width: 100.00, height: 30.00)
@@ -97,32 +80,21 @@ class SettingsViewController: UIViewController {
     
     @objc func logoutButtonTapped(sender: UIButton!) {
       
-//          UserDefaults.standard.set(false, forKey: "isUserLoggedin");
-//          UserDefaults.standard.synchronize();
-//
-//          self.performSegue(withIdentifier: "loginView", sender: self);
+          UserDefaults.standard.set(false, forKey: "isUserLoggedin");
+          UserDefaults.standard.synchronize();
+
+          performSegue(withIdentifier: "loginView", sender: self);
         
-        let image = HomeViewController.retrieve(imageNamed: "yes")
+      //  let image = HomeViewController.retrieve(imageNamed: "yes")
         
        // let image = UIImage(named: imageName)
-        let imageView = UIImageView(image: image!)
+       // let imageView = UIImageView(image: image!)
         
         
-        imageView.frame = CGRect(x: 100, y: 100, width: 100, height: 200)
-        self.view.addSubview(imageView)
-        
+//        imageView.frame = CGRect(x: 100, y: 100, width: 100, height: 200)
+//        self.view.addSubview(imageView)
+//
         
       }
     
 }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-
