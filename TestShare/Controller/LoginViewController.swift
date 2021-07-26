@@ -7,12 +7,24 @@
 
 import Foundation
 import UIKit
+import CoreData
 
+@available(iOS 13.0, *)
 class LoginViewController: UIViewController {
 
     @IBOutlet weak var userEmailTextField: UITextField!
     @IBOutlet weak var userPasswordTextField: UITextField!
-    
+    struct Root: Codable {
+        let  data: [InnerItem]
+    }
+    struct InnerItem:Codable {
+        let  error: Bool?
+        let  uid: String?
+
+        private enum CodingKeys : String, CodingKey {
+            case error = "error", uid = "uid"
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +64,18 @@ class LoginViewController: UIViewController {
             }
             
             do {
-                if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: [])as? NSDictionary{
+                
+                
+              //  let decoder = JSONDecoder()
+               // let gitData = try decoder.decode(Root.self, from: data!)
+                
+              //  print(gitData)
+                
+                
+//                let decoder = JSONDecoder()
+//                let product = try decoder.decode(InnerItem.self, from: data!)
+                
+                if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: .mutableLeaves) as?  [String: Any]{
                     
                     
                     print(jsonResult)
@@ -60,35 +83,41 @@ class LoginViewController: UIViewController {
                     if let personDictionary = jsonResult as? NSDictionary{
                 
                             let error = personDictionary["error"] as? Bool;
-                            print(error!);
-                            let error_msg = personDictionary["error_msg"];
+                            
                         
-                           if(error == false)
+                            if(error == false)
                            {
                             if let userId = jsonResult["uid"] as? String{
                                 print(userId)
-                                
                        //         UserDefaults(suiteName: "group.POP.TestShare")?.removeObject(forKey: "userId")
                                 //login successful
                                 UserDefaults.standard.set(true, forKey: "isUserLoggedIn");
                                 UserDefaults.standard.set(userId, forKey: "userId");
                                 UserDefaults.standard.synchronize();
                                 
+                                let managedContext = AppDelegate.viewContext
+                                //Store objet image
+                                let userStore: NSManagedObject = NSEntityDescription.insertNewObject(forEntityName: "User", into: managedContext);
+                                userStore.setValue(userId, forKey: "id");
+                                userStore.setValue(true, forKey: "isLog");
+                                do {
+                                   try managedContext.save()
+                                  } catch {
+                                   print("Failed saving")
+                                }
+                                
                                 if let userDef = UserDefaults(suiteName: "group.POP.TestShare"){
-                                    
-                                    
                                     userDef.set(userId, forKey: "userId")
+                                    userDef.set(true, forKey: "isUserLoggedIn")
                                     userDef.synchronize()
                                 }
                                 DispatchQueue.main.async{
                                     self.dismiss(animated: true, completion: nil);
                                 }
-                         
-                            
                            }
                     }
                      else if (error != false){
-                        
+                       let error_msg = personDictionary["error_msg"];
                         DispatchQueue.global(qos: .background).async {
                             // Background Thread
                             DispatchQueue.main.async {
@@ -108,11 +137,16 @@ class LoginViewController: UIViewController {
                 }
                 }
                
-            } catch let error {
-                   //Perform the error handling here
-                print("Failed to load: \(error.localizedDescription)")
-                
-                
+            } catch DecodingError.keyNotFound(let key, let context) {
+                Swift.print("could not find key \(key) in JSON: \(context.debugDescription)")
+            } catch DecodingError.valueNotFound(let type, let context) {
+                Swift.print("could not find type \(type) in JSON: \(context.debugDescription)")
+            } catch DecodingError.typeMismatch(let type, let context) {
+                Swift.print("type mismatch for type \(type) in JSON: \(context.debugDescription)")
+            } catch DecodingError.dataCorrupted(let context) {
+                Swift.print("data found to be corrupted in JSON: \(context.debugDescription)")
+            } catch let error as NSError {
+                NSLog("Error in read(from:ofType:) domain= \(error.domain), description= \(error.localizedDescription)")
             }
             
 
@@ -156,6 +190,7 @@ extension Dictionary {
         .joined(separator: "&")
         .data(using: .utf8)
     }
+    
 }
 
 extension CharacterSet {

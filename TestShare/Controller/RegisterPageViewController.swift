@@ -16,12 +16,24 @@ class RegisterPageViewController: UIViewController {
     
     @IBOutlet weak var userEmailTextField: UITextField!
     
-    
     @IBOutlet weak var userFirstNameTextFiled: UITextField!
     
     @IBOutlet weak var userNameTextField: UITextField!
     
-   
+    @IBOutlet weak var userNumeroTextField: UITextField!
+ 
+    @IBOutlet weak var userAdressTextField: UITextField!
+    
+    @IBOutlet weak var userCodePostalTextField: UITextField!
+    
+    @IBOutlet weak var userPaysTextField: UITextField!
+    
+    @IBOutlet weak var userBatimentTextField: UITextField!
+    
+    @IBOutlet weak var userTelTextField: UITextField!
+    
+    @IBOutlet weak var userCityTextField: UITextField!
+    
     
    
     
@@ -49,10 +61,16 @@ class RegisterPageViewController: UIViewController {
         
         let userFirstName = userFirstNameTextFiled.text;
         let userName = userNameTextField.text;
-     
+        let userNumero = userNumeroTextField.text;
+        let userAdress = userAdressTextField.text;
+        let userCodePostal = userCodePostalTextField.text;
+        let userPays = "FR";
+        let userBatiment = userBatimentTextField.text;
+        let userTel = userTelTextField.text;
+        let userCity = userCityTextField.text
         
         
-        if((userPassword ?? "").isEmpty ||  (userRepeatPassword ?? "").isEmpty ||  (userEmail ?? "").isEmpty ||  (userFirstName ?? "").isEmpty ||  (userName ?? "").isEmpty){
+        if((userPassword ?? "").isEmpty ||  (userRepeatPassword ?? "").isEmpty ||  (userEmail ?? "").isEmpty ||  (userFirstName ?? "").isEmpty ||  (userName ?? "").isEmpty ||  (userNumero ?? "").isEmpty ||  (userAdress ?? "").isEmpty ||  (userCodePostal ?? "").isEmpty ){
             displayMyAlertMessage(userMessage: "All Field are required");
             return;
             
@@ -76,6 +94,15 @@ class RegisterPageViewController: UIViewController {
                 "name" : userName!,
                 "email": userEmail!,
                 "password": userPassword!,
+                
+                "num" : userNumero!,
+                "address" : userAdress!,
+                "city" : userCity!,
+                "postal": userCodePostal!,
+                "country": "FR",
+                
+                "bat": userBatiment!,
+                "tel": userTel!,
                 
             ]
         

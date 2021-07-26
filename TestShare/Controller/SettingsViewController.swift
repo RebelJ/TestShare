@@ -6,7 +6,9 @@
 //
 
 import UIKit
+import CoreData
 
+@available(iOS 13.0, *)
 class SettingsViewController: UIViewController {
 
     
@@ -79,11 +81,34 @@ class SettingsViewController: UIViewController {
     
     
     @objc func logoutButtonTapped(sender: UIButton!) {
-      
-          UserDefaults.standard.set(false, forKey: "isUserLoggedin");
-          UserDefaults.standard.synchronize();
+        
+        
+        let imageIndex = 2
+        let documentsPath = "testURL"
+        
+        
+//
+//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//                return
+//            }
 
-          performSegue(withIdentifier: "loginView", sender: self);
+            let managedContext = AppDelegate.viewContext
+        //Store objet image
+        let image: NSManagedObject = NSEntityDescription.insertNewObject(forEntityName: "Image", into: managedContext)
+        image.setValue(imageIndex, forKey: "id")
+        image.setValue(documentsPath, forKey: "url")
+        
+        
+        do {
+           try managedContext.save()
+          } catch {
+           print("Failed saving")
+        }
+//
+//          UserDefaults.standard.set(false, forKey: "isUserLoggedin");
+//          UserDefaults.standard.synchronize();
+//
+//          performSegue(withIdentifier: "loginView", sender: self);
         
       //  let image = HomeViewController.retrieve(imageNamed: "yes")
         

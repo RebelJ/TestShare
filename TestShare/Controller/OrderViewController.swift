@@ -11,19 +11,7 @@ import UIKit
 
 class OrderViewController: UIViewController {
     
-    @IBOutlet weak var userNumeroTextField: UITextField!
     
-    @IBOutlet weak var userAdressTextField: UITextField!
-    
-    @IBOutlet weak var userCodePostalTextField: UITextField!
-    
-    @IBOutlet weak var userPaysTextField: UITextField!
-    
-    @IBOutlet weak var userBatimentTextField: UITextField!
-    
-    @IBOutlet weak var userRegionTextField: UITextField!
-    
-    @IBOutlet weak var userTelTextField: UITextField!
     
     
     override func viewDidLoad() {
